@@ -17,7 +17,7 @@ app.use(helmet())
 app.use(cors())
 
 app.get('/', (req, res) => {
-  res.send('Hello, world!')
+  res.send('Welcome to the Potty Planet API!')
 })
 
 app.use(function errorHandler(error, req, res, next) {
