@@ -7,6 +7,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const helmet = require('helmet')
 const { NODE_ENV } = require('./config')
+const usersRouter = require('./user/user-router')
 
 const app = express()
 
@@ -19,6 +20,8 @@ app.use(cors())
 app.get('/', (req, res) => {
   res.send('Welcome to the Potty Planet API!')
 })
+
+app.use('/api/users', usersRouter)
 
 app.use(function errorHandler(error, req, res, next) {
   let response

@@ -1,6 +1,6 @@
 const path = require('path')
 const express = require('express')
-const UsersService = require('./users-service')
+const UsersService = require('./user-service')
 
 const usersRouter = express.Router()
 const jsonParser = express.json()
