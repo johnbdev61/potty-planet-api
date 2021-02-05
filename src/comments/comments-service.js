@@ -16,8 +16,8 @@ const CommentsService = {
                 SELECT
                   usr.id,
                   usr.username,
-                  usr.date_created,
-              ) tmp)
+                  usr.date_created
+              ) AS tmp)
             )
           ) AS "user"`
         )
@@ -46,7 +46,7 @@ const CommentsService = {
     const { user } = comment
     return {
       id: comment.id,
-      comment: xss(comment.text),
+      comment: xss(comment.comment),
       post_id: comment.post_id,
       date_created: new Date(comment.date_created),
       user: {

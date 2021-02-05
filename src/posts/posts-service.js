@@ -10,18 +10,14 @@ const PostsService = {
 
   insertPost(db, newPost) {
     return db
-     .insert(newPost)
-     .into('posts')
-     .returning('*')
-     .then(([post]) => post)
+      .insert(newPost)
+      .into('posts')
+      .returning('*')
+      .then(([post]) => post)
   },
 
   getById(db, id) {
-    return db
-      .select('*')
-      .from('posts')
-      .where('posts.id', id)
-      .first()
+    return db.select('*').from('posts').where('posts.id', id).first()
   },
 
   getCommentsForPost(db, post_id) {
@@ -38,18 +34,14 @@ const PostsService = {
                 SELECT
                   usr.id,
                   usr.username,
-                  usr.date_created,
+                  usr.date_created
               ) tmp)
             )
           ) AS "user"`
         )
       )
       .where('comm.post_id', post_id)
-      .leftJoin(
-        'users AS usr',
-        'comm.user_id',
-        'usr.id'
-      )
+      .leftJoin('users AS usr', 'comm.user_id', 'usr.id')
       .groupBy('comm.id', 'usr.id')
   },
 
@@ -79,7 +71,7 @@ const PostsService = {
       user: {
         id: user.id,
         username: user.username,
-        date_created: newDate(user.date_created),
+        date_created: new Date(user.date_created),
       },
     }
   },
