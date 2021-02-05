@@ -3,41 +3,24 @@ const xss = require('xss')
 const PostsService = {
   getAllPosts(db) {
     return db
-      .from('posts AS post')
-      .select(
-        'post.id',
-        'post.title',
-        'post.date_created',
-        'post.is_resolved',
-        db.raw(
-          `count(DISTINCT comm) AS number_of_comments`
-        ),
-        db.raw(
-          `json_strips_nulls(
-            json_build_object(
-              'id', usr.id,
-              'username', usr.username,
-              'date_created', usr.date_created
-            )
-          ) AS "author"`
-        ),
-      )
-      .leftJoin(
-        'comments AS comm',
-        'post.id',
-        'comm.post_id',
-      )
-      .leftJoin(
-        'users AS usr',
-        'post.author_id',
-        'usr.id',
-      )
-      .groupBy('post.id', 'usr.id')
+      .select('posts.*', 'users.username')
+      .from('posts')
+      .leftOuterJoin('users', 'posts.author_id', '=', 'users.id')
+  },
+
+  insertPost(db, newPost) {
+    return db
+     .insert(newPost)
+     .into('posts')
+     .returning('*')
+     .then(([post]) => post)
   },
 
   getById(db, id) {
-    return PostsService.getAllPosts(db)
-      .where('post.id', id)
+    return db
+      .select('*')
+      .from('posts')
+      .where('posts.id', id)
       .first()
   },
 
@@ -70,20 +53,21 @@ const PostsService = {
       .groupBy('comm.id', 'usr.id')
   },
 
-  serializePost(post) {
-    const { author } = post
-    return {
-      id: post.id,
-      title: xss(post.title),
-      date_created: new Date(post.date_created),
-      number_of_comments: Number(post.number_of_comments) || 0,
-      author: {
-        id: author.id,
-        username: author.username,
-        date_created: new Date(author.date_created),
-      },
-    }
-  },
+  // serializePost(post) {
+  //   const { author } = post
+  //   return {
+  //     id: post.id,
+  //     title: xss(post.title),
+  //     content: xss(post.content),
+  //     date_created: new Date(post.date_created),
+  //     number_of_comments: Number(post.number_of_comments) || 0,
+  //     author: {
+  //       id: author.id,
+  //       username: author.username,
+  //       date_created: new Date(author.date_created),
+  //     },
+  //   }
+  // },
 
   serializePostComment(comment) {
     const { user } = comment

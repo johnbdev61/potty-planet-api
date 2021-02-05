@@ -1,7 +1,19 @@
 CREATE TABLE messages (
   id SERIAL PRIMARY KEY,
   date_created TIMESTAMP DEFAULT now() NOT NULL,
-  sender_id,
-  recipient_id,
+  sender_id INTEGER
+    REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  recipient_id INTEGER
+    REFERENCES users(id) ON DELETE CASCADE NOT NULL,
   direct_message TEXT NOT NULL,
-)
+  chat_id INTEGER
+    REFERENCES chats(id) ON DELETE CASCADE NOT NULL    
+);
+
+CREATE TABLE chats (
+  id SERIAL PRIMARY KEY,
+  user1 INTEGER
+    REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  user2 INTEGER
+    REFERENCES users(id) ON DELETE CASCADE NOT NULL
+);
