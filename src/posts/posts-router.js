@@ -88,6 +88,13 @@ postsRouter
       })
       .catch(next)
   })
+  .delete(jsonBodyParser, requireAuth, (req, res, next) => {
+    PostsService.deletePost(req.app.get('db'), req.params.post_id)
+      .then(() => {
+        res.status(204).end()
+      })
+      .catch(next)
+  })
 
 async function checkPostExists(req, res, next) {
   try {

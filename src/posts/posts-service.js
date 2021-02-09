@@ -16,6 +16,13 @@ const PostsService = {
       .then(([post]) => post)
   },
 
+  deletePost(db, id) {
+    return db
+    .from('posts')
+    .where({ id })
+    .delete()
+  },
+
   getById(db, id) {
     return db.select('*').from('posts').where('posts.id', id).first()
   },
