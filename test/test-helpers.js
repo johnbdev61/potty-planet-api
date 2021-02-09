@@ -6,22 +6,22 @@ function makeUsersArray() {
   return [
     {
       id: 1,
-      user_name: 'test-user-1',
+      username: 'test-user-1',
       password: 'password',
     },
     {
       id: 2,
-      user_name: 'test-user-2',
+      username: 'test-user-2',
       password: 'password',
     },
     {
       id: 3,
-      user_name: 'test-user-3',
+      username: 'test-user-3',
       password: 'password',
     },
     {
       id: 4,
-      user_name: 'test-user-4',
+      username: 'test-user-4',
       password: 'password',
     },
   ]
@@ -148,7 +148,7 @@ function makeExpectedComments(users, postId, comments) {
       date_created: comment.date_created.toISOString(),
       user: {
         id: commentUser.id,
-        user_name: commentUser.user_name,
+        username: commentUser.username,
         date_created: commentUser.date_created.toISOString(),
       },
     }
