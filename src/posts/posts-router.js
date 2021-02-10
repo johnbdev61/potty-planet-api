@@ -38,20 +38,20 @@ postsRouter
     for (const [key, value] of Object.entries(newPost)) {
       if (value == null) {
         return res.status(400).json({
-          error: { message: `Missing ${key} in request body` }
+          error: { message: `Missing ${key} in request body` },
         })
       }
     }
     newPost = {
       title: xss(title),
       content: xss(content),
+      is_resolved: false,
       author_id: req.user.id,
     }
 
     PostsService.insertPost(req.app.get('db'), newPost)
       .then((post) => {
         console.log('POST', post)
-        // const post = posts[0]
         res.status(201).location(`/api/posts/${post.id}`).json(post)
       })
       .catch(next)
@@ -66,32 +66,33 @@ postsRouter
       .then((post) => {
         if (!post) {
           return res.status(404).json({
-            error: {message: `Post does not exist`}
+            error: { message: `Post does not exist` },
           })
         }
-        res.json(post)
+        req.post = post
+        next()
       })
       .catch(next)
   })
-  
-postsRouter
-  .route('/:post_id/comments/')
-  .all(requireAuth)
-  .all(checkPostExists)
   .get((req, res, next) => {
-    PostsService.getCommentsForPost(
-      req.app.get('db'),
-      req.params.post_id
-    )
-      .then(comments => {
-        res.json(comments.map(PostsService.serializePostComment))
-      })
-      .catch(next)
+    res.json(req.post)
   })
   .delete(jsonBodyParser, requireAuth, (req, res, next) => {
     PostsService.deletePost(req.app.get('db'), req.params.post_id)
       .then(() => {
         res.status(204).end()
+      })
+      .catch(next)
+  })
+
+postsRouter
+  .route('/:post_id/comments/')
+  .all(requireAuth)
+  .all(checkPostExists)
+  .get((req, res, next) => {
+    PostsService.getCommentsForPost(req.app.get('db'), req.params.post_id)
+      .then((comments) => {
+        res.json(comments.map(PostsService.serializePostComment))
       })
       .catch(next)
   })
@@ -105,7 +106,7 @@ async function checkPostExists(req, res, next) {
 
     if (!post)
       return res.status(404).json({
-        error: `Post doesn't exist`
+        error: `Post doesn't exist`,
       })
     res.post = post
     next()

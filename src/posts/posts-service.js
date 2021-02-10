@@ -24,7 +24,12 @@ const PostsService = {
   },
 
   getById(db, id) {
-    return db.select('*').from('posts').where('posts.id', id).first()
+    return db
+      .select('*')
+      .from('posts')
+      .where('posts.id', id)
+      .leftOuterJoin('users', 'posts.author_id', '=', 'users.id')
+      .first()
   },
 
   getCommentsForPost(db, post_id) {

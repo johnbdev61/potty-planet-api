@@ -64,54 +64,54 @@ function makePostsArray(users) {
   ]
 }
 
-function makeCommentsArray(users, articles) {
+function makeCommentsArray(users, posts) {
   return [
     {
       id: 1,
       comment: 'First test comment!',
-      post_id: articles[0].id,
+      post_id: posts[0].id,
       user_id: users[0].id,
       date_created: new Date('2029-01-22T16:28:32.615Z'),
     },
     {
       id: 2,
       comment: 'Second test comment!',
-      post_id: articles[0].id,
+      post_id: posts[0].id,
       user_id: users[1].id,
       date_created: new Date('2029-01-22T16:28:32.615Z'),
     },
     {
       id: 3,
       comment: 'Third test comment!',
-      post_id: articles[0].id,
+      post_id: posts[0].id,
       user_id: users[2].id,
       date_created: new Date('2029-01-22T16:28:32.615Z'),
     },
     {
       id: 4,
       comment: 'Fourth test comment!',
-      post_id: articles[0].id,
+      post_id: posts[0].id,
       user_id: users[3].id,
       date_created: new Date('2029-01-22T16:28:32.615Z'),
     },
     {
       id: 5,
       comment: 'Fifth test comment!',
-      post_id: articles[articles.length - 1].id,
+      post_id: posts[posts.length - 1].id,
       user_id: users[0].id,
       date_created: new Date('2029-01-22T16:28:32.615Z'),
     },
     {
       id: 6,
       comment: 'Sixth test comment!',
-      post_id: articles[articles.length - 1].id,
+      post_id: posts[posts.length - 1].id,
       user_id: users[2].id,
       date_created: new Date('2029-01-22T16:28:32.615Z'),
     },
     {
       id: 7,
       comment: 'Seventh test comment!',
-      post_id: articles[3].id,
+      post_id: posts[3].id,
       user_id: users[0].id,
       date_created: new Date('2029-01-22T16:28:32.615Z'),
     },
@@ -126,12 +126,9 @@ function makeExpectedPost(users, post, comments = []) {
     title: post.title,
     content: post.content,
     date_created: post.date_created.toISOString(),
-    author: {
-      id: author.id,
-      username: author.username,
-      date_created: author.date_created.toISOString(),
-      date_modified: author.date_modified || null,
-    },
+    author_id: post.author_id,
+    username: users.username,
+    is_resolved: null //TODO: FIX THIS
   }
 }
 
