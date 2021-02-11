@@ -84,6 +84,19 @@ postsRouter
       })
       .catch(next)
   })
+  .patch(jsonBodyParser, requireAuth, (req, res, next) => {
+    const { is_resolved } = req.body
+    const postToUpdate = { is_resolved }
+    PostsService.updatePost(
+      req.app.get('db'),
+      req.params.post_id,
+      postToUpdate
+    )
+    .then(() => {
+      res.status(204).end()
+    })
+    .catch(next)
+  })
 
 postsRouter
   .route('/:post_id/comments/')

@@ -23,6 +23,12 @@ const PostsService = {
     .delete()
   },
 
+  updatePost(knex, id, is_resolved) {
+    return knex('posts')
+      .where({ id })
+      .update(is_resolved)
+  },
+
   getById(db, id) {
     return db
       .select('*')
