@@ -115,4 +115,39 @@ describe.only('Posts Endpoints', function() {
       })
     })
   })
+  describe(`POST /api/posts`, () => {
+    context(`When creating a post with required fields`, () => {
+      const { testUsers } = helpers.makePostsFixtures()
+      const testUser = testUsers[0]
+      beforeEach('insert users', () => {
+        return db.into('users').insert(testUsers)
+      })
+      it('creates a post responding with 201 and new post', () => {
+        const newPost = {
+          title: 'There is poop everywhere!',
+          content: 'My kid poops everywhere except the potty!'
+        }
+        return supertest(app)
+          .post('/api/posts')
+          .set('Authorization', helpers.makeAuthHeader(testUser))
+          .send(newPost)
+          .expect(201)
+          .expect((res) => {
+            expect(res.body.title).to.eql(newPost.title)
+            expect(res.body.content).to.eql(newPost.content)
+            expect(res.body).to.have.property('id')
+            expect(res.body.author_id).to.eql(testUser.id)
+            expect(res.headers.location).to.eql(`/api/posts/${res.body.id}`)
+            const expected = new Intl.DateTimeFormat('en-US').format(new Date())
+            const actual = new Intl.DateTimeFormat('en-us').format(
+              new Date(res.body.date_created)
+            )
+            expect(actual).to.eql(expected)
+          })
+          .then((res) => {
+            supertest(app).get(`/api/posts/${res.body.id}`).expect(res.body)
+          })
+      })
+    })
+  })
 })    
