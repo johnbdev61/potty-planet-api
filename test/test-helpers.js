@@ -33,7 +33,9 @@ function makePostsArray(users) {
       id: 1,
       title: 'First test post!',
       author_id: users[0].id,
-      date_created: new Date('2029-01-22T16:28:32.615Z'),
+      username: users[0].username,
+      date_created: '2029-01-22T16:28:32.615Z',
+      is_resolved: false,
       content:
         'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus consequuntur deserunt commodi, nobis qui inventore corrupti iusto aliquid debitis unde non.Adipisci, pariatur.Molestiae, libero esse hic adipisci autem neque ?',
     },
@@ -41,7 +43,9 @@ function makePostsArray(users) {
       id: 2,
       title: 'Second test post!',
       author_id: users[1].id,
-      date_created: new Date('2029-01-22T16:28:32.615Z'),
+      username: users[1].username,
+      date_created: '2029-01-22T16:28:32.615Z',
+      is_resolved: false,
       content:
         'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus consequuntur deserunt commodi, nobis qui inventore corrupti iusto aliquid debitis unde non.Adipisci, pariatur.Molestiae, libero esse hic adipisci autem neque ?',
     },
@@ -49,7 +53,9 @@ function makePostsArray(users) {
       id: 3,
       title: 'Third test post!',
       author_id: users[2].id,
-      date_created: new Date('2029-01-22T16:28:32.615Z'),
+      username: users[2].username,
+      date_created: '2029-01-22T16:28:32.615Z',
+      is_resolved: false,
       content:
         'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus consequuntur deserunt commodi, nobis qui inventore corrupti iusto aliquid debitis unde non.Adipisci, pariatur.Molestiae, libero esse hic adipisci autem neque ?',
     },
@@ -57,7 +63,9 @@ function makePostsArray(users) {
       id: 4,
       title: 'Fourth test post!',
       author_id: users[3].id,
-      date_created: new Date('2029-01-22T16:28:32.615Z'),
+      username: users[3].username,
+      date_created: '2029-01-22T16:28:32.615Z',
+      is_resolved: false,
       content:
         'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus consequuntur deserunt commodi, nobis qui inventore corrupti iusto aliquid debitis unde non.Adipisci, pariatur.Molestiae, libero esse hic adipisci autem neque ?',
     },
@@ -71,85 +79,51 @@ function makeCommentsArray(users, posts) {
       comment: 'First test comment!',
       post_id: posts[0].id,
       user_id: users[0].id,
-      date_created: new Date('2029-01-22T16:28:32.615Z'),
+      date_created: '2029-01-22T16:28:32.615Z',
     },
     {
       id: 2,
       comment: 'Second test comment!',
       post_id: posts[0].id,
       user_id: users[1].id,
-      date_created: new Date('2029-01-22T16:28:32.615Z'),
+      date_created: '2029-01-22T16:28:32.615Z',
     },
     {
       id: 3,
       comment: 'Third test comment!',
       post_id: posts[0].id,
       user_id: users[2].id,
-      date_created: new Date('2029-01-22T16:28:32.615Z'),
+      date_created: '2029-01-22T16:28:32.615Z',
     },
     {
       id: 4,
       comment: 'Fourth test comment!',
       post_id: posts[0].id,
       user_id: users[3].id,
-      date_created: new Date('2029-01-22T16:28:32.615Z'),
+      date_created: '2029-01-22T16:28:32.615Z',
     },
     {
       id: 5,
       comment: 'Fifth test comment!',
       post_id: posts[posts.length - 1].id,
       user_id: users[0].id,
-      date_created: new Date('2029-01-22T16:28:32.615Z'),
+      date_created: '2029-01-22T16:28:32.615Z',
     },
     {
       id: 6,
       comment: 'Sixth test comment!',
       post_id: posts[posts.length - 1].id,
       user_id: users[2].id,
-      date_created: new Date('2029-01-22T16:28:32.615Z'),
+      date_created: '2029-01-22T16:28:32.615Z',
     },
     {
       id: 7,
       comment: 'Seventh test comment!',
       post_id: posts[3].id,
       user_id: users[0].id,
-      date_created: new Date('2029-01-22T16:28:32.615Z'),
+      date_created: '2029-01-22T16:28:32.615Z',
     },
   ]
-}
-
-function makeExpectedPost(users, post, comments = []) {
-  const author = users.find((user) => user.id === post.author_id)
-
-  return {
-    id: post.id,
-    title: post.title,
-    content: post.content,
-    date_created: post.date_created.toISOString(),
-    author_id: post.author_id,
-    username: users.username,
-    is_resolved: null //TODO: FIX THIS
-  }
-}
-
-function makeExpectedComments(users, postId, comments) {
-  const expectedComments = comments.filter(
-    (comment) => comment.post_id === postId
-  )
-
-  return expectedComments.map((comment) => {
-    const commentUser = users.find((user) => user.id === comment.user_id)
-    return {
-      id: comment.id,
-      comment: comment.comment,
-      date_created: comment.date_created.toISOString(),
-      user: {
-        id: commentUser.id,
-        username: commentUser.username,
-        date_created: commentUser.date_created.toISOString(),
-      },
-    }
-  })
 }
 
 function makeMaliciousPost(user) {
@@ -157,18 +131,17 @@ function makeMaliciousPost(user) {
     id: 666,
     date_created: new Date(),
     title: 'Naughty naughty very naughty <script>alert("xss");</script>',
-    author_id: user.id,
     content: `Bad image <img src="https://url.to.file.which/does-not.exist" onerror="alert(document.cookie);">. But not <strong>all</strong> bad.`,
   }
   const expectedPost = {
-    ...makeExpectedPost([user], maliciousArticle),
+    ...maliciousPost,
     title:
       'Naughty naughty very naughty &lt;script&gt;alert("xss");&lt;/script&gt;',
     content: `Bad image <img src="https://url.to.file.which/does-not.exist">. But not <strong>all</strong> bad.`,
   }
   return {
-    maliciousArticle,
-    expectedArticle,
+    maliciousPost,
+    expectedPost,
   }
 }
 
@@ -195,8 +168,6 @@ module.exports = {
   makeUsersArray,
   makePostsArray,
   makeCommentsArray,
-  makeExpectedPost,
-  makeExpectedComments,
   makeMaliciousPost,
   makePostsFixtures,
   makeAuthHeader,

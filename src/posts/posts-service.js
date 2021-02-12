@@ -17,21 +17,16 @@ const PostsService = {
   },
 
   deletePost(db, id) {
-    return db
-    .from('posts')
-    .where({ id })
-    .delete()
+    return db.from('posts').where({ id }).delete()
   },
 
   updatePost(knex, id, is_resolved) {
-    return knex('posts')
-      .where({ id })
-      .update(is_resolved)
+    return knex('posts').where({ id }).update(is_resolved)
   },
 
   getById(db, id) {
     return db
-      .select('*')
+      .select('posts.*', 'users.username')
       .from('posts')
       .where('posts.id', id)
       .leftOuterJoin('users', 'posts.author_id', '=', 'users.id')
