@@ -119,7 +119,7 @@ describe.only('Posts Endpoints', function() {
     context(`When creating a post with required fields`, () => {
       const { testUsers } = helpers.makePostsFixtures()
       const testUser = testUsers[0]
-      beforeEach('insert users', () => {
+      beforeEach('insert post', () => {
         return db.into('users').insert(testUsers)
       })
       it('creates a post responding with 201 and new post', () => {
@@ -146,6 +146,30 @@ describe.only('Posts Endpoints', function() {
           })
           .then((res) => {
             supertest(app).get(`/api/posts/${res.body.id}`).expect(res.body)
+          })
+      })
+    })
+    context('When creating a post without required field', () => {
+      const { testUsers } = helpers.makePostsFixtures()
+      const testUser = testUsers[0]
+      beforeEach('insert post', () => {
+        return db.into('users').insert(testUsers)
+      })
+      const requiredField = 'title'
+      const newPost = {
+        title: 'There is poop everywhere!',
+        content: 'My kid poops everywhere except the potty!',
+      }
+
+      it(`responds with 400 and an error message when the ${requiredField} is missing`, () => {
+        delete newPost[requiredField]
+
+        return supertest(app)
+          .post('/api/posts')
+          .set('Authorization', helpers.makeAuthHeader(testUser))
+          .send(newPost)
+          .expect(400, {
+            error: { message: `Missing ${requiredField} in request body` },
           })
       })
     })
