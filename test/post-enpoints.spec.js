@@ -4,7 +4,7 @@ const supertest = require('supertest')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 
-describe.only('Posts Endpoints', function() {
+describe.only('Posts Endpoints', function () {
   let db
 
   before('make knex instance', () => {
@@ -24,9 +24,7 @@ describe.only('Posts Endpoints', function() {
   describe(`GET /api/posts`, () => {
     context(`Given no posts`, () => {
       it(`responds with 200 and an empty list`, () => {
-        return supertest(app)
-          .get('/api/posts')
-          .expect(200, [])
+        return supertest(app).get('/api/posts').expect(200, [])
       })
     })
     context('Given there are posts in the database', () => {
@@ -37,17 +35,17 @@ describe.only('Posts Endpoints', function() {
           .into('users')
           .insert(testUsers)
           .then(() => {
-            return db.into('posts').insert(testPosts.map(post => {
-              const newPost = { ...post }
-              delete newPost.username
-              return newPost
-            }))
+            return db.into('posts').insert(
+              testPosts.map((post) => {
+                const newPost = { ...post }
+                delete newPost.username
+                return newPost
+              })
+            )
           })
       })
       it('responds with 200 and all of the posts', () => {
-        return supertest(app)
-          .get('/api/posts')
-          .expect(200, testPosts)
+        return supertest(app).get('/api/posts').expect(200, testPosts)
       })
     })
     context(`Given an XSS attack post`, () => {
@@ -76,11 +74,9 @@ describe.only('Posts Endpoints', function() {
   })
   describe(`GET /api/posts/:post_id`, () => {
     context(`Given no post`, () => {
-    const { testUsers } = helpers.makePostsFixtures()
+      const { testUsers } = helpers.makePostsFixtures()
       beforeEach(`insert users`, () => {
-        return db
-          .into('users')
-          .insert(testUsers)
+        return db.into('users').insert(testUsers)
       })
       it(`responds with 404`, () => {
         const postId = 123456
@@ -98,11 +94,13 @@ describe.only('Posts Endpoints', function() {
           .into('users')
           .insert(testUsers)
           .then(() => {
-            return db.into('posts').insert(testPosts.map(post => {
-              const newPost = { ...post }
-              delete newPost.username
-              return newPost
-            }))
+            return db.into('posts').insert(
+              testPosts.map((post) => {
+                const newPost = { ...post }
+                delete newPost.username
+                return newPost
+              })
+            )
           })
       })
       it(`responds with 200 and the specified post`, () => {
@@ -125,7 +123,7 @@ describe.only('Posts Endpoints', function() {
       it('creates a post responding with 201 and new post', () => {
         const newPost = {
           title: 'There is poop everywhere!',
-          content: 'My kid poops everywhere except the potty!'
+          content: 'My kid poops everywhere except the potty!',
         }
         return supertest(app)
           .post('/api/posts')
@@ -197,12 +195,13 @@ describe.only('Posts Endpoints', function() {
           .into('users')
           .insert(testUsers)
           .then(() => {
-            return db.into('posts').insert(testPosts.map(post => {
-              const newPost = { ...post }
-              delete newPost.username
-              console.log('NEW POST', newPost)
-              return newPost
-            }))
+            return db.into('posts').insert(
+              testPosts.map((post) => {
+                const newPost = { ...post }
+                delete newPost.username
+                return newPost
+              })
+            )
           })
       })
 
@@ -210,32 +209,67 @@ describe.only('Posts Endpoints', function() {
         const { testUsers } = helpers.makePostsFixtures()
         const testUser = testUsers[0]
         const idToRemove = 2
-        const expectedPosts = testPosts.filter(
-          (post) => post.id !== idToRemove
-        )
+        const expectedPosts = testPosts.filter((post) => post.id !== idToRemove)
         return supertest(app)
           .delete(`/api/posts/${idToRemove}`)
           .set('Authorization', helpers.makeAuthHeader(testUser))
           .expect(204)
-          .then((res) =>
-            supertest(app).get(`/api/posts`).expect(expectedPosts)
-          )
+          .then((res) => supertest(app).get(`/api/posts`).expect(expectedPosts))
       })
     })
   })
   describe(`PATCH /api/posts/:post_id`, () => {
     context(`Given post does not exist`, () => {
-        const { testUsers } = helpers.makePostsFixtures()
-        beforeEach(`patch Post`, () => {
-          return db.into('users').insert(testUsers)
-        })
-        it(`responds with 404`, () => {
-          const postId = 123456
-          return supertest(app)
-            .patch(`/api/posts/${postId}`)
-            .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
-            .expect(404, { error: { message: 'Post does not exist' } })
-        })
+      const { testUsers } = helpers.makePostsFixtures()
+      beforeEach(`patch Post`, () => {
+        return db.into('users').insert(testUsers)
+      })
+      it(`responds with 404`, () => {
+        const postId = 123456
+        return supertest(app)
+          .patch(`/api/posts/${postId}`)
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+          .expect(404, { error: { message: 'Post does not exist' } })
+      })
+    })
+    context(`Given there is a post in the database matching id`, () => {
+      const { testUsers, testPosts } = helpers.makePostsFixtures()
+      const testUser = testUsers[0]
+      beforeEach('insert posts', () => {
+        return db
+          .into('users')
+          .insert(testUsers)
+          .then(() => {
+            return db.into('posts').insert(
+              testPosts.map((post) => {
+                const newPost = { ...post }
+                delete newPost.username
+                return newPost
+              })
+            )
+          })
+      })
+      it(`responds with 204 and updates the post`, () => {
+        const idToUpdate = 2
+        const updatePost = {
+          is_resolved: true,
+        }
+        const expectedPost = {
+          ...testPosts[idToUpdate - 1],
+          ...updatePost,
+        }
+        return supertest(app)
+          .patch(`/api/posts/${idToUpdate}`)
+          .set('Authorization', helpers.makeAuthHeader(testUser))
+          .send(updatePost)
+          .expect(204)
+          .then((res) =>
+            supertest(app)
+              .get(`/api/posts/${idToUpdate}`)
+              .set('Authorization', helpers.makeAuthHeader(testUser))
+              .expect(expectedPost)
+          )
+      })
     })
   })
 })
