@@ -174,4 +174,68 @@ describe.only('Posts Endpoints', function() {
       })
     })
   })
-})    
+
+  describe('DELETE /api/posts', () => {
+    context('Given post does not exist', () => {
+      const { testUsers } = helpers.makePostsFixtures()
+      beforeEach(`delete Post`, () => {
+        return db.into('users').insert(testUsers)
+      })
+      it('responds with 404', () => {
+        const postId = 123456
+        return supertest(app)
+          .delete(`/api/posts/${postId}`)
+          .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+          .expect(404, { error: { message: 'Post does not exist' } })
+      })
+    })
+
+    context('Given there is a post in the database matching id', () => {
+      const { testUsers, testPosts } = helpers.makePostsFixtures()
+      beforeEach('insert posts', () => {
+        return db
+          .into('users')
+          .insert(testUsers)
+          .then(() => {
+            return db.into('posts').insert(testPosts.map(post => {
+              const newPost = { ...post }
+              delete newPost.username
+              console.log('NEW POST', newPost)
+              return newPost
+            }))
+          })
+      })
+
+      it('responds with 204 and removes the post', () => {
+        const { testUsers } = helpers.makePostsFixtures()
+        const testUser = testUsers[0]
+        const idToRemove = 2
+        const expectedPosts = testPosts.filter(
+          (post) => post.id !== idToRemove
+        )
+        return supertest(app)
+          .delete(`/api/posts/${idToRemove}`)
+          .set('Authorization', helpers.makeAuthHeader(testUser))
+          .expect(204)
+          .then((res) =>
+            supertest(app).get(`/api/posts`).expect(expectedPosts)
+          )
+      })
+    })
+  })
+  describe(`PATCH /api/posts/:post_id`, () => {
+    context(`Given post does not exist`, () => {
+        const { testUsers } = helpers.makePostsFixtures()
+        beforeEach(`patch Post`, () => {
+          return db.into('users').insert(testUsers)
+        })
+        it(`responds with 404`, () => {
+          const postId = 123456
+          return supertest(app)
+            .patch(`/api/posts/${postId}`)
+            .set('Authorization', helpers.makeAuthHeader(testUsers[0]))
+            .expect(404, { error: { message: 'Post does not exist' } })
+        })
+    })
+  })
+})
