@@ -4,7 +4,7 @@ const supertest = require('supertest')
 const app = require('../src/app')
 const helpers = require('./test-helpers')
 
-describe.only('Posts Endpoints', function () {
+describe('Posts Endpoints', function () {
   let db
 
   before('make knex instance', () => {

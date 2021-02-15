@@ -48,6 +48,7 @@ const CommentsService = {
       id: comment.id,
       comment: xss(comment.comment),
       post_id: comment.post_id,
+      user_id: comment.user_id,
       date_created: new Date(comment.date_created),
       user: {
         id: user.id,
