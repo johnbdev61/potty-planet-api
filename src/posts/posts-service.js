@@ -58,22 +58,6 @@ const PostsService = {
       .groupBy('comm.id', 'usr.id')
   },
 
-  // serializePost(post) {
-  //   const { author } = post
-  //   return {
-  //     id: post.id,
-  //     title: xss(post.title),
-  //     content: xss(post.content),
-  //     date_created: new Date(post.date_created),
-  //     number_of_comments: Number(post.number_of_comments) || 0,
-  //     author: {
-  //       id: author.id,
-  //       username: author.username,
-  //       date_created: new Date(author.date_created),
-  //     },
-  //   }
-  // },
-
   serializePostComment(comment) {
     const { user } = comment
     return {

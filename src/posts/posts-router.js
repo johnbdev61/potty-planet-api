@@ -51,7 +51,6 @@ postsRouter
 
     PostsService.insertPost(req.app.get('db'), newPost)
       .then((post) => {
-        console.log('POST', post)
         res.status(201).location(`/api/posts/${post.id}`).json(post)
       })
       .catch(next)
@@ -61,7 +60,6 @@ postsRouter
   .route('/:post_id')
   .all(requireAuth)
   .all((req, res, next) => {
-    console.log(req.params)
     PostsService.getById(req.app.get('db'), req.params.post_id)
       .then((post) => {
         if (!post) {

@@ -13,7 +13,7 @@ describe.only('Comments Endpoints', function () {
     db = knex({
       client: 'pg',
       connection: {
-        connectionString: process.env.TEST_DB_URL,
+        connectionString: process.env.TEST_DATAASE_URL,
       },
     })
     app.set('db', db)
@@ -88,7 +88,6 @@ describe.only('Comments Endpoints', function () {
         this.retries(3)
         const { testComments } = helpers.makePostsFixtures()
         const testUser = testUsers[0]
-        console.log('TEST USER', testUser)
         const testComment = testComments[0]
         return supertest(app)
           .post(`/api/comments`)
