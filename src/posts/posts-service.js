@@ -84,7 +84,6 @@ const PostsService = {
       user: {
         id: user.id,
         username: user.username,
-        date_created: new Date(user.date_created),
       },
     }
   },
