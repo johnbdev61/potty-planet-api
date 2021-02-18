@@ -1,6 +1,16 @@
-# Map Mash API
+# Potty Planet API
 
-https://map-mash.netlify.app
+https://potty-planet-client.vercel.app
+
+## Routes
+
+api/posts - This route allows you to GET and POST posts which consist of a title and an optional content field
+
+api/:posts_id - This route allows you to GET or DELETE a post by ID
+
+api/:post_id/comments/ - This route allows you to GET comments for a particular post ID
+
+api/comments - This route allows you to POST new comments which consist of a text field, associated post ID and user ID
 
 ## Description
 
