@@ -12,9 +12,9 @@ All posts rendered in the Success Stories route may still take comments. However
 
 Potty Planet is a PERN application, cosisting of PostgreSQL, Express, React and Node.js.
 
-![picture](./public/screenshots/Homepage.png)
-![picture](./public/screenshots/Mash.png)
-![picture](./public/screenshots/OtherUserMash.png)
-![picture](./public/screenshots/SearchList.png)
-
-
+![picture](./screenshots/Home.png)
+![picture](./screenshots/openPost.png)
+![picture](./screenshots/postForm.png)
+![picture](./screenshots/successStories.png)
+![picture](./screenshots/resolvedPost.png)
+![picture](./screenshots/notFound.png)
